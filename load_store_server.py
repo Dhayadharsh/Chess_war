@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-
+#imports
 BOARD_SIZE = 16
 SQUARE_SIZE = 50
 BOARD_COLS=16
