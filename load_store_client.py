@@ -1,4 +1,3 @@
-#this is comment
 import pygame
 import numpy as np
 
@@ -11,8 +10,8 @@ WINDOW_SIZE = (BOARD_COLS * SQUARE_SIZE, BOARD_ROWS * SQUARE_SIZE)
 GRAY=(25,45,45)
 PWHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-BOARD_GREEN = (153, 255, 153)
-BOARD_WHITE = (200, 200, 200)
+BOARD_GREEN = (139, 69, 19)
+BOARD_WHITE = (245, 222, 179)
 HIGHLIGHT_COLOR = (255, 255, 0)
 CHECK_COLOR = (255, 0, 0)
 MIDLINE_color = (255, 255, 255)
@@ -257,7 +256,6 @@ class Pawn(Piece):
 
 pk = 0
 
-
 def symbol_to_object(symbol, color):
     if symbol == 'R':
         return Rook(color)
@@ -281,6 +279,7 @@ def symbol_to_object(symbol, color):
 
 def object_to_symbol(piece):
     if isinstance(piece, Rook):
+        
         return 'R'
     elif isinstance(piece, King):
         return 'K'
@@ -455,6 +454,66 @@ def draw_sidebar(screen, selected_piece, counts):
         img = font.render(selected_piece.symbol, True, HIGHLIGHT_COLOR)
         screen.blit(img, (BOARD_COLS * SQUARE_SIZE + 20, pieces.index(selected_piece.symbol) * SQUARE_SIZE + 20))
 
+###########----------- image adding for each peicees -------------------------------
+PIECE_IMAGES = {}  # Define the dictionary to store the images
+
+# Load the white pawn image and scale it to the appropriate size
+white_pawn_image_path = "E:/chess_2.0/Chess_plt60.png"
+PIECE_IMAGES['P'] = pygame.transform.scale(pygame.image.load(white_pawn_image_path), (SQUARE_SIZE, SQUARE_SIZE))
+
+def symbol_to_object(symbol, color):
+    global pk
+    if symbol == 'P':
+        pk += 1
+        # Load the image based on the color
+        img = PIECE_IMAGES['P'] if color == 'white' else PIECE_IMAGES['p']
+        return Pawn(color, pk, img)
+    
+    # Handle other pieces here (King, Knight, etc.)
+    # Return corresponding objects for those pieces
+    # For example:
+    # if symbol == 'K':
+    #     return King(color)
+    # Similar handling for other pieces
+
+
+""""
+#images for the peices--
+import tkinter as tk
+from PIL import Image, ImageTk
+
+white_pawn_image_path = r"E:\chess_2.0\Chess_plt60.png"
+black_pawn_image_path = r"E:\chess_2.0\Chess_pdt60.png"
+
+def resize_image(path, size=(60, 60)):
+    img = Image.open(path)
+    return ImageTk.PhotoImage(img.resize(size))
+
+# Resize both white and black pawn images
+white_pawn_image = resize_image(white_pawn_image_path)
+black_pawn_image = resize_image(black_pawn_image_path)
+
+#na downlaod panna image eh 60*60 so theva illa.. but still
+
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+global kc, nc, sc, pc, bc, qcc, rc, oc  # Add any that are being modified
 
 def white_placer():
     screen = pygame.display.set_mode((WINDOW_SIZE[0] + SIDEBAR_WIDTH, WINDOW_SIZE[1]))
@@ -469,7 +528,9 @@ def white_placer():
     qc, QC = 0, 4
     oc, OC = 0, 16
     rc, RC = 0, 8
-    bc, nc, sc = 0, 0, 0
+    bc, BC = 0, 8
+    nc, NC = 0, 8
+    sc, SC = 0, 8
     piece_counts = [kc, nc, sc, pc, bc, qc, rc]  # Corresponding piece counts for King, Knight, Swordsman, Pawn, etc.
 
     while running:
@@ -478,6 +539,7 @@ def white_placer():
                 pygame.quit()
                 return None
             elif event.type == pygame.MOUSEBUTTONDOWN:
+
                 x, y = pygame.mouse.get_pos()
                 if x >= BOARD_COLS * SQUARE_SIZE:
                     selected_piece = \
@@ -486,6 +548,62 @@ def white_placer():
                 elif y // SQUARE_SIZE > 8:
                     row, col = y // SQUARE_SIZE, x // SQUARE_SIZE
                     if selected_piece and event.button == 1:
+                        existing_piece = board.board[row][col]
+                        
+                        
+
+                        # Prevent double-counting same square
+                        if existing_piece and type(existing_piece) == type(selected_piece):
+                            continue
+                        can_place = False
+                        if isinstance(selected_piece, Pawn) and pc < PC:
+                            can_place = True
+                        elif isinstance(selected_piece, King) and kc < KC:
+                            can_place = True
+                        elif isinstance(selected_piece, Queen) and qc < QC:
+                            can_place = True
+                        elif isinstance(selected_piece, Rook) and rc < RC:
+                            can_place = True
+                        elif isinstance(selected_piece, Bishop) and bc + nc + sc < OC:
+                            can_place = True
+                        elif isinstance(selected_piece, Knight) and bc + nc + sc < OC:
+                            can_place = True
+                        elif isinstance(selected_piece, swordsman) and bc + nc + sc < OC:
+                            can_place = True
+                        
+                        if can_place:
+                            if isinstance(existing_piece, Knight):
+                                    nc -= 1
+                                    piece_counts[1] = max(nc, 0)
+                                    oc = max(oc - 1, 0)
+                        
+                            if isinstance(existing_piece, Bishop):
+                                    bc -= 1
+                                    piece_counts[4] = max(bc, 0)
+                                    oc = max(oc - 1, 0)
+
+                            if isinstance(existing_piece, swordsman):
+                                    sc -= 1
+                                    piece_counts[2] = max(sc, 0)
+                                    oc = max(oc - 1, 0)
+
+                            if isinstance(existing_piece, Pawn):
+                                    pc -= 1
+                                    piece_counts[3] = max(pc, 0)              
+                            
+                            if isinstance(existing_piece, Queen):
+                                    qc -= 1
+                                    piece_counts[5] = max(qc, 0)
+                                
+                            if isinstance(existing_piece, Rook):
+                                    rc -= 1
+                                    piece_counts[6] = max(rc, 0)
+                                
+                            if isinstance(existing_piece, King):
+                                    kc -= 1
+                                    piece_counts[0] = max(kc, 0)    
+
+
                         if isinstance(selected_piece, Pawn) and pc < PC:
                             board.place_piece(Pawn(PWHITE, pc), (row, col))
                             pc += 1
@@ -502,8 +620,8 @@ def white_placer():
                             board.place_piece(Rook(PWHITE), (row, col))
                             rc += 1
                             piece_counts[6] = rc
-                        elif isinstance(selected_piece, Bishop) or isinstance(selected_piece, Knight) or isinstance(
-                                selected_piece, swordsman) and oc < OC:
+                        elif (isinstance(selected_piece, Bishop) or isinstance(selected_piece, Knight) or isinstance(
+                                selected_piece, swordsman)) and oc < OC:
                             board.place_piece(selected_piece, (row, col))
                             if isinstance(selected_piece, Bishop):
                                 bc = bc + 1
@@ -572,19 +690,19 @@ def load_window():
 
         # Button text rendering
         new_game_text = font.render('New Game', True, PWHITE)
-        load_game_text = font.render('Load Game', True, PWHITE)
+        load_game_text = font.render('Load Position', True, PWHITE)
 
         # Button positioning
-        new_game_rect = pygame.Rect(50, 100, 300, 100)
-        load_game_rect = pygame.Rect(50, 250, 300, 100)
+        new_game_rect = pygame.Rect(50+300, 100+200, 300, 100)
+        load_game_rect = pygame.Rect(50+300, 250+200, 300, 100)
 
         # Draw buttons
         pygame.draw.rect(screen, GRAY, new_game_rect)
         pygame.draw.rect(screen, GRAY, load_game_rect)
 
         # Display button text
-        screen.blit(new_game_text, (new_game_rect.x + 20, new_game_rect.y + 20))
-        screen.blit(load_game_text, (load_game_rect.x + 20, load_game_rect.y + 20))
+        screen.blit(new_game_text, (new_game_rect.x +30, new_game_rect.y +30 ))
+        screen.blit(load_game_text, (load_game_rect.x +30 , load_game_rect.y +30))
 
         pygame.display.flip()
         p = 0
@@ -692,7 +810,7 @@ import pygame
 
 # ChessBoard and other necessary classes should be defined or imported here.
 hostname = socket.gethostname()
-ip_address = "172.23.192.103"
+ip_address = "172.23.5.46"
 
 print("IP Address:", ip_address)
 IHOST = "172.23.5.46"  # Server IP address (same as the client)
