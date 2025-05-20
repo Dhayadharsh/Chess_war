@@ -475,8 +475,6 @@ def symbol_to_object(symbol, color):
     # if symbol == 'K':
     #     return King(color)
     # Similar handling for other pieces
-
-
 """"
 #images for the peices--
 import tkinter as tk
@@ -496,23 +494,6 @@ black_pawn_image = resize_image(black_pawn_image_path)
 #na downlaod panna image eh 60*60 so theva illa.. but still
 
 """
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 global kc, nc, sc, pc, bc, qcc, rc, oc  # Add any that are being modified
 
 def white_placer():
@@ -1032,7 +1013,6 @@ def run_client(HOST=ip_address, PORT=IPORT):
 
         pygame.quit()
         client_socket.close()
-
 
 if __name__ == '__main__':
     run_client()
